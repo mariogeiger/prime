@@ -4,9 +4,18 @@ mod tests {
 
     #[test]
     fn is_prime_mr_works() {
-        assert!(is_prime_mr(11));
-        assert!(is_prime_mr(3));
-        assert!(is_prime_mr(2));
+        assert_eq!(is_prime_mr(0), false);
+        assert_eq!(is_prime_mr(1), false);
+        assert_eq!(is_prime_mr(2), true);
+        assert_eq!(is_prime_mr(3), true);
+        assert_eq!(is_prime_mr(4), false);
+        assert_eq!(is_prime_mr(5), true);
+        assert_eq!(is_prime_mr(6), false);
+        assert_eq!(is_prime_mr(7), true);
+        assert_eq!(is_prime_mr(8), false);
+        assert_eq!(is_prime_mr(9), false);
+        assert_eq!(is_prime_mr(10), false);
+        assert_eq!(is_prime_mr(11), true);
     }
 
     #[test]
@@ -48,6 +57,7 @@ mod tests {
     fn iterator_works() {
         assert_eq!(primes(0).take(4).collect::<Vec<_>>(), vec![2, 3, 5, 7]);
         assert_eq!(primes(0).find(|&x| x > 1000).unwrap(), 1009);
+        assert_eq!(primes(0).nth(10_000 - 1).unwrap(), 104_729);
     }
 }
 
@@ -65,38 +75,25 @@ fn power(a: u64, n: u64, m: u64) -> u64 {
     result
 }
 
-fn witness(n: u64, s: u64, d: u64, a: u64) -> bool {
-    let mut x = power(a, d, n);
-    let mut y: u64 = 0;
-    let mut s = s;
-
-    while s > 0 {
-        y = (x * x) % n;
-        if y == 1 && x != 1 && x != n - 1 {
-            return false;
-        }
-        x = y;
-        s = s - 1;
-    }
-    y == 1
-}
-
 /// Miller–Rabin primality test
 /// https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test#Deterministic_variants
 pub fn is_prime_mr(n: u64) -> bool {
-    if (n % 2 == 0 && n != 2) || (n < 2) || (n % 3 == 0 && n != 3) {
+    if n <= 3 {
+        return n >= 2;
+    }
+    if n % 2 == 0 {
         return false;
     }
-    if n <= 3 {
-        return true;
-    }
 
-    let mut d = n / 2;
-    let mut s = 1;
-    while d % 2 == 0 {
-        d /= 2;
-        s += 1;
-    }
+    let (d, s) = {
+        let mut d = n / 2;
+        let mut s = 1;
+        while d % 2 == 0 {
+            d /= 2;
+            s += 1;
+        }
+        (d, s)
+    };
 
     if n < 2_047 {
         [2].iter()
@@ -123,7 +120,21 @@ pub fn is_prime_mr(n: u64) -> bool {
     } else {
         [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37].iter()
     }.cloned()
-        .all(|a: u64| -> bool { witness(n, s, d, a) })
+        .all(|a: u64| -> bool {
+            let mut x = power(a, d, n);
+            let mut y: u64 = 0;
+            let mut s = s;
+
+            while s > 0 {
+                y = (x * x) % n;
+                if y == 1 && x != 1 && x != n - 1 {
+                    return false;
+                }
+                x = y;
+                s = s - 1;
+            }
+            y == 1
+        })
 }
 
 pub fn next_prime(x: u64) -> u64 {
