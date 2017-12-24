@@ -13,6 +13,8 @@ mod tests {
     fn next_prime_works() {
         assert_eq!(next_prime(11), 11);
         assert_eq!(next_prime(12), 13);
+        assert_eq!(next_prime(2_047), 2_053);
+        assert_eq!(next_prime(1_373_653), 1_373_677);
     }
 
     #[test]
@@ -79,6 +81,8 @@ fn witness(n: u64, s: u64, d: u64, a: u64) -> bool {
     y == 1
 }
 
+/// Miller–Rabin primality test
+/// https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test#Deterministic_variants
 pub fn is_prime_mr(n: u64) -> bool {
     if (n % 2 == 0 && n != 2) || (n < 2) || (n % 3 == 0 && n != 3) {
         return false;
@@ -94,36 +98,32 @@ pub fn is_prime_mr(n: u64) -> bool {
         s += 1;
     }
 
-    let w = |a: u64| -> bool { witness(n, s, d, a) };
-
     if n < 2_047 {
-        w(2)
+        [2].iter()
     } else if n < 1_373_653 {
-        w(2) && w(3)
+        [2, 3].iter()
     } else if n < 9_080_191 {
-        w(31) && w(73)
+        [31, 73].iter()
     } else if n < 25_326_001 {
-        w(2) && w(3) && w(5)
+        [2, 3, 5].iter()
     } else if n < 3_215_031_751 {
-        w(2) && w(3) && w(5) && w(7)
+        [2, 3, 5, 7].iter()
     } else if n < 4_759_123_141 {
-        w(2) && w(7) && w(61)
+        [2, 7, 61].iter()
     } else if n < 1_122_004_669_633 {
-        w(2) && w(13) && w(23) && w(1662803)
+        [2, 13, 23, 1_662_803].iter()
     } else if n < 2_152_302_898_747 {
-        w(2) && w(3) && w(5) && w(7) && w(11)
+        [2, 3, 5, 7, 11].iter()
     } else if n < 3_474_749_660_383 {
-        w(2) && w(3) && w(5) && w(7) && w(11) && w(13)
+        [2, 3, 5, 7, 11, 13].iter()
     } else if n < 341_550_071_728_321 {
-        w(2) && w(3) && w(5) && w(7) && w(11) && w(13) && w(17)
+        [2, 3, 5, 7, 11, 13, 17].iter()
     } else if n < 3_825_123_056_546_413_051 {
-        w(2) && w(3) && w(5) && w(7) && w(11) && w(13) && w(17) && w(19) && w(23)
-    } else if n < 3_825_123_056_546_413_051 {
-        w(2) && w(3) && w(5) && w(7) && w(11) && w(13) && w(17) && w(19) && w(23)
+        [2, 3, 5, 7, 11, 13, 17, 19, 23].iter()
     } else {
-        w(2) && w(3) && w(5) && w(7) && w(11) && w(13) && w(17) && w(19) && w(23) && w(29) && w(31)
-            && w(37)
-    }
+        [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37].iter()
+    }.cloned()
+        .all(|a: u64| -> bool { witness(n, s, d, a) })
 }
 
 pub fn next_prime(x: u64) -> u64 {
