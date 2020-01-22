@@ -61,7 +61,7 @@ mod tests {
     }
 }
 
-fn power(a: u64, n: u64, m: u64) -> u64 {
+pub fn power(a: u64, n: u64, m: u64) -> u64 {
     let mut power = a;
     let mut result = 1;
     let mut n = n;
