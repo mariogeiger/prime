@@ -1,5 +1,5 @@
 # prime
-![Rust](https://github.com/mariogeiger/prime/workflows/Rust/badge.svg)
+![Rust](https://github.com/mariogeiger/prime/workflows/Rust/badge.svg?branch=master)
 
 rust *u64* prime library
 
