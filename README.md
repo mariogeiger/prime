@@ -1,4 +1,6 @@
 # prime
+![Rust](https://github.com/mariogeiger/prime/workflows/Rust/badge.svg)
+
 rust *u64* prime library
 
 - Minimalist
