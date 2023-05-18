@@ -119,22 +119,23 @@ pub fn is_prime_mr(n: u64) -> bool {
         [2, 3, 5, 7, 11, 13, 17, 19, 23].iter()
     } else {
         [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37].iter()
-    }.cloned()
-        .all(|a: u64| -> bool {
-            let mut x = power(a, d, n);
-            let mut y: u64 = 0;
-            let mut s = s;
+    }
+    .cloned()
+    .all(|a: u64| -> bool {
+        let mut x = power(a, d, n);
+        let mut y: u64 = 0;
+        let mut s = s;
 
-            while s > 0 {
-                y = (x * x) % n;
-                if y == 1 && x != 1 && x != n - 1 {
-                    return false;
-                }
-                x = y;
-                s = s - 1;
+        while s > 0 {
+            y = (x * x) % n;
+            if y == 1 && x != 1 && x != n - 1 {
+                return false;
             }
-            y == 1
-        })
+            x = y;
+            s = s - 1;
+        }
+        y == 1
+    })
 }
 
 pub fn next_prime(x: u64) -> u64 {
