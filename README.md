@@ -20,8 +20,8 @@ assert_eq!(primes(0).take(4).collect::<Vec<_>>(), vec![2, 3, 5, 7]);
 ## Usage
 
 ```toml
-# add the following into Cargo.toml 
+# add the following into Cargo.toml
 
 [dependencies]
-prime = { git = "https://github.com/antigol/prime" }
+prime = { git = "https://github.com/mariogeiger/prime" }
 ```
